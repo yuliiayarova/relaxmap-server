@@ -3,19 +3,20 @@ import express from 'express';
 import cors from 'cors';
 import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
+import { logger } from './middleware/logger.js';
 import { connectMongoDB } from './db/connectToMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import authRouter from './routes/authRoutes.js';
 import usersRouter from './routes/usersRoutes.js';
 import categoriesRouter from './routes/categoriesRoutes.js';
-import locationsRouter from './routes/locationsRoutes.js';
 import feedbacksRouter from './routes/feedbacksRoutes.js';
+import locationsRouter from './routes/locationsRoutes.js';
 
 const app = express();
 app.use(cors());
 app.use(cookieParser());
-
+app.use(logger);
 const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
