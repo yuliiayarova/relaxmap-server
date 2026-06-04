@@ -24,13 +24,13 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/locations', locationsRouter);
-app.use('/api/feedbacks', feedbacksRouter);
+app.use(feedbacksRouter);
 
 app.use(notFoundHandler);
 app.use(errors());
 app.use(errorHandler);
 
-// await connectMongoDB();
+await connectMongoDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
