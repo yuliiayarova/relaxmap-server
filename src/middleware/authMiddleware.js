@@ -14,7 +14,7 @@ export const authMiddleWare = async (req, res, next) => {
   if (isAccessTokenExpired) throw createHttpError(401, 'Access token expired');
 
   const user = await User.findById(session.userId);
-  if (!user) throw createHttpError(401, 'User does not exists at this session');
+  if (!user) throw createHttpError(401, 'User does not exist in this session');
 
   req.user = user;
   next();
