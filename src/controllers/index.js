@@ -11,3 +11,7 @@ export const auth = {
   logoutUserController,
   refreshUserController,
 };
+
+export const categories = {
+  getCategories,
+};
