@@ -10,8 +10,8 @@ import { errorHandler } from './middleware/errorHandler.js';
 import authRouter from './routes/authRoutes.js';
 import usersRouter from './routes/usersRoutes.js';
 import categoriesRouter from './routes/categoriesRoutes.js';
-import locationsRouter from './routes/locationsRoutes.js';
 import feedbacksRouter from './routes/feedbacksRoutes.js';
+import locationsRouter from './routes/locationsRoutes.js';
 
 const app = express();
 app.use(cors());
