@@ -1,8 +1,15 @@
-import { registerUser } from './auth/registerUser.js';
-import { getCategories } from './categories/getCategories.js';
+import {
+  loginUserController,
+  logoutUserController,
+  refreshUserController,
+  registerUserController,
+} from './auth/authControllers.js';
 
 export const auth = {
-  registerUser,
+  registerUserController,
+  loginUserController,
+  logoutUserController,
+  refreshUserController,
 };
 
 export const categories = {
