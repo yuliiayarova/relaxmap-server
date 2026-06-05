@@ -2,7 +2,15 @@ import createHttpError from 'http-errors';
 import { Location } from '../../models/location.js';
 
 export const getAllLocations = async (req, res) => {
-  const { page = 1, perPage = 10, region, locationType, search } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    region,
+    locationType,
+    search,
+    sortBy = '_id',
+    sortOrder = 'asc',
+  } = req.query;
   //   const { _id: userId } = req.user;
   const skip = (page - 1) * perPage;
   const locationsQuery = Location.find();
@@ -12,15 +20,18 @@ export const getAllLocations = async (req, res) => {
   if (search) {
     locationsQuery.where({
       $or: [
-        { type: { $regex: search, $options: 'i' } },
-        { slug: { $regex: search, $options: 'i' } },
-        { shortDescription: { $regex: search, $options: 'i' } },
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
       ],
     });
   }
   const [totalLocations, locations] = await Promise.all([
     locationsQuery.clone().countDocuments(),
-    locationsQuery.clone().skip(skip).limit(perPage),
+    locationsQuery
+      .clone()
+      .skip(skip)
+      .limit(perPage)
+      .sort({ [sortBy]: sortOrder }),
   ]);
   const totalPages = Math.ceil(totalLocations / perPage);
   res

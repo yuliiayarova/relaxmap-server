@@ -14,13 +14,11 @@ const locationSchema = new Schema(
       trim: true,
     },
     locationType: {
-      type: Schema.Types.ObjectId,
-      ref: 'LocationType', //чтото не понял на кого ссылаться
+      type: String,
       required: true,
     },
     region: {
-      type: Schema.Types.ObjectId,
-      ref: 'Region', //чтото не понял на кого ссылаться
+      type: String,
       required: true,
     },
     rate: {
