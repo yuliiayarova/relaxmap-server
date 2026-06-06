@@ -15,6 +15,7 @@ import locationsRouter from './routes/locationsRoutes.js';
 
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://localhost:3000',
   'http://localhost:3001',
   // Тут добавимо наш фронтент
 ];
