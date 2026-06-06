@@ -44,7 +44,7 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoriesRouter);
-app.use('/api/locations', locationsRouter);
+app.use(locationsRouter);
 app.use('/api/feedbacks', feedbacksRouter);
 
 app.use(notFoundHandler);

@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const locationTypeSchema = new Schema(
   {
-    _id: String,
     type: {
       type: String,
       required: true,
@@ -11,7 +10,11 @@ const locationTypeSchema = new Schema(
       type: String,
       required: true,
     },
-    shortDescription: String,
+    shortDescription: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   {
     versionKey: false,
