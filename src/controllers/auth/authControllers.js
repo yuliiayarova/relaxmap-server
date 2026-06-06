@@ -41,11 +41,11 @@ export const logoutUserController = async (req, res) => {
     await logoutUserService(req.cookies.sessionId);
   }
 
-  const isProd = process.env.NODE_ENV === 'production';
   const cookieOptions = {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    secure: false,
+    sameSite: 'none',
+    path: '/',
   };
 
   res.clearCookie('accessToken', cookieOptions);
