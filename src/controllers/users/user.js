@@ -1,4 +1,7 @@
-import { getUserByIdService, getUserLocationsService } from '../../services/user.js';
+import {
+  getUserByIdService,
+  getUserLocationsService,
+} from '../../services/user.js';
 import createHttpError from 'http-errors';
 
 export const getUserById = async (req, res, next) => {
@@ -17,7 +20,6 @@ export const getUserById = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const getCurrentUser = async (req, res, next) => {
   try {
@@ -39,7 +41,7 @@ export const getCurrentUser = async (req, res, next) => {
         name: user.name,
         avatarUrl: user.avatarUrl,
         articlesAmount: user.articlesAmount,
-            },
+      },
     });
   } catch (error) {
     next(error);
@@ -57,7 +59,11 @@ export const getUserLocations = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const { locations, totalItems } = await getUserLocationsService(id, page, limit);
+    const { locations, totalItems } = await getUserLocationsService(
+      id,
+      page,
+      limit,
+    );
     const totalPages = Math.ceil(totalItems / limit);
 
     res.status(200).json({
@@ -69,5 +75,9 @@ export const getUserLocations = async (req, res, next) => {
         limit,
         totalItems,
         totalPages,
-
-  
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
