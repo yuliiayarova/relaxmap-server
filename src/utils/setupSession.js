@@ -1,10 +1,12 @@
 // Function to setup cookies to the session
 
 export const setupSession = (res, session) => {
+  const isProd = process.env.NODE_ENV === 'production';
+
   const cookieOptions = {
     httpOnly: true,
-    secure: false,
-    sameSite: 'none',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
     path: '/',
   };
 
