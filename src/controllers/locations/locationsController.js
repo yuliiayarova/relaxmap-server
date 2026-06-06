@@ -50,3 +50,30 @@ export const getLocationById = async (req, res) => {
   }
   res.status(200).json(location);
 };
+
+export const createLocation = async (req, res) => {
+  const location = await Location.create({
+    ...req.body,
+    ownerId: req.user._id,
+  });
+  res.status(201).json(location);
+};
+
+export const updateLocation = async (req, res) => {
+  const { locationId } = req.params;
+  const location = await Location.findOneAndUpdate(
+    {
+      _id: locationId,
+      ownerId: req.user._id,
+    },
+    req.body,
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    },
+  );
+  if (!location) {
+    throw createHttpError(404, 'Location not found');
+  }
+  res.status(200).json(location);
+};
