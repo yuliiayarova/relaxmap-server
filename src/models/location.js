@@ -47,7 +47,6 @@ const locationSchema = new Schema(
       },
     ],
   },
-  },
   {
     timestamps: true,
     versionKey: false,
