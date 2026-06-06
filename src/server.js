@@ -45,7 +45,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoriesRouter);
 app.use(locationsRouter);
-app.use('/api/feedbacks', feedbacksRouter);
+app.use(feedbacksRouter);
 
 app.use(notFoundHandler);
 app.use(errors());
