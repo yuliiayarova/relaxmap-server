@@ -4,6 +4,10 @@ import {
   refreshUserController,
   registerUserController,
 } from './auth/authControllers.js';
+import {
+  getLocationTypes,
+  getRegions,
+} from './categories/getCategories.js';
 
 import { getCategories } from './categories/getCategories.js';
 
@@ -15,5 +19,6 @@ export const auth = {
 };
 
 export const categories = {
-  getCategories,
+  getRegions,
+  getLocationTypes,
 };
