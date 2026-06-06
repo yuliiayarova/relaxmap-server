@@ -1,16 +1,24 @@
 // Function to setup cookies to the session
 
 export const setupSession = (res, session) => {
-  res.cookie('accessToken', session.accessToken, {
+  const isProd = process.env.NODE_ENV === 'production';
+
+  const cookieOptions = {
     httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+  };
+
+  res.cookie('accessToken', session.accessToken, {
+    ...cookieOptions,
     expires: session.accessTokenValidUntil,
   });
   res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
+    ...cookieOptions,
     expires: session.refreshTokenValidUntil,
   });
   res.cookie('sessionId', session._id, {
-    httpOnly: true,
+    ...cookieOptions,
     expires: session.refreshTokenValidUntil,
   });
 };
