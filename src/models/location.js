@@ -47,7 +47,11 @@ const locationSchema = new Schema(
       },
     ],
   },
-  { versionKey: false, timestamps: true },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
 );
 
 export const Location = model('Location', locationSchema);

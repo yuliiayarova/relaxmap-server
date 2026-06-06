@@ -13,8 +13,28 @@ import categoriesRouter from './routes/categoriesRoutes.js';
 import feedbacksRouter from './routes/feedbacksRoutes.js';
 import locationsRouter from './routes/locationsRoutes.js';
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://localhost:3000',
+  'http://localhost:3001',
+  // Тут добавимо наш фронтент
+];
+
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(logger);
 const PORT = process.env.PORT ?? 3000;
