@@ -69,13 +69,11 @@ export const getUserLocations = async (req, res, next) => {
     res.status(200).json({
       status: 200,
       message: 'Successfully found user locations!',
-      data: {
-        locations,
-        page,
-        limit,
-        totalItems,
-        totalPages,
-      },
+      page,
+      limit,
+      totalItems,
+      totalPages,
+      locations,
     });
   } catch (error) {
     next(error);
