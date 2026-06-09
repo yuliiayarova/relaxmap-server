@@ -17,7 +17,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://localhost:3000',
   'http://localhost:3001',
-  // Тут добавимо наш фронтент
+  process.env.FRONTEND_DOMAIN,
 ];
 
 const app = express();
