@@ -4,7 +4,7 @@ import { Location } from '../../models/location.js';
 export const getAllFeedbacks = async (req, res, next) => {
   try {
     const page = Number(req.query.page) || 1;
-    const perPage = Number(req.query.perPage) || 3;
+    const perPage = Number(req.query.perPage) || 6;
 
     const maxFeedbacks = 6;
     const skip = (page - 1) * perPage;
@@ -16,6 +16,7 @@ export const getAllFeedbacks = async (req, res, next) => {
 
     if (skip >= maxFeedbacks) {
       return res.status(200).json({
+        status: 200,
         page,
         perPage,
         totalFeedbacks: limitedTotalFeedbacks,
@@ -31,6 +32,7 @@ export const getAllFeedbacks = async (req, res, next) => {
       .limit(perPage);
 
     res.status(200).json({
+      status: 200,
       page,
       perPage,
       totalFeedbacks: limitedTotalFeedbacks,
@@ -65,6 +67,7 @@ export const getFeedbacksByLocationId = async (req, res, next) => {
       .skip(skip)
       .limit(perPage);
     res.status(200).json({
+      status: 200,
       page,
       perPage,
       totalItems,
@@ -83,6 +86,7 @@ export const createFeedbackByLocationId = async (req, res, next) => {
     const location = await Location.findById(locationId);
     if (!location) {
       return res.status(404).json({
+        staus: 404,
         message: 'Location not found',
       });
     }
@@ -94,6 +98,7 @@ export const createFeedbackByLocationId = async (req, res, next) => {
     location.feedbacksId.push(feedback._id);
     await location.save();
     res.status(201).json({
+      status: 201,
       message: 'Feedback created successfully',
       data: feedback,
     });
