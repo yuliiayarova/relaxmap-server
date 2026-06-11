@@ -40,6 +40,7 @@ export const getCurrentUser = async (req, res, next) => {
       status: 200,
       message: 'Successfully found user!',
       data: {
+        _id: user._id,
         name: user.name,
         avatarUrl: user.avatarUrl,
         articlesAmount: user.articlesAmount,
