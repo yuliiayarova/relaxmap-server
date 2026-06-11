@@ -7,10 +7,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function saveFileToCloudinary(buffer, locationId) {
+export async function saveFileToCloudinary(
+  buffer,
+  id,
+  folder = 'relaxmap/locations',
+  namePrefix = 'location',
+) {
   const options = {
-    folder: 'relaxmap/locations',
-    public_id: `location_${locationId}`,
+    folder: folder,
+    public_id: `${namePrefix}_${id}`,
     resource_type: 'image',
     overwrite: true,
     unique_filename: false,
