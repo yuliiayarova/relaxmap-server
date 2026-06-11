@@ -1,8 +1,10 @@
 import {
   getUserByIdService,
   getUserLocationsService,
+  updateUserService,
 } from '../../services/user.js';
 import createHttpError from 'http-errors';
+import { saveFileToCloudinary } from '../../utils/saveFileToCloudinary.js';
 
 export const getUserById = async (req, res, next) => {
   try {
@@ -74,6 +76,76 @@ export const getUserLocations = async (req, res, next) => {
       totalItems,
       totalPages,
       locations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { name } = req.body;
+
+    const updateData = {};
+
+    if (name) {
+      updateData.name = name;
+    }
+
+    if (req.file) {
+      try {
+        const cloudinaryResult = await saveFileToCloudinary(
+          req.file.buffer,
+          userId,
+          'relaxmap/avatars',
+          'avatar',
+        );
+        updateData.avatarUrl = cloudinaryResult.secure_url;
+      } catch (cloudinaryError) {
+        return next(
+          createHttpError(500, 'Помилка при завантаженні аватара в хмару'),
+        );
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return next(createHttpError(400, 'Немає даних для оновлення'));
+    }
+
+    const updatedUser = await updateUserService(userId, updateData);
+
+    if (!updatedUser) {
+      return next(createHttpError(404, 'Користувача не знайдено'));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAvatarController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const defaultAvatarUrl =
+      'https://ac.goit.global/fullstack/react/default-avatar.jpg';
+
+    const updatedUser = await updateUserService(userId, {
+      avatarUrl: defaultAvatarUrl,
+    });
+
+    if (!updatedUser) {
+      return next(createHttpError(404, 'Користувача не знайдено'));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Аватар успішно видалено',
+      data: updatedUser,
     });
   } catch (error) {
     next(error);

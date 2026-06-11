@@ -14,3 +14,9 @@ export const getUserLocationsService = async (userId, page, limit) => {
   ]);
   return { locations, totalItems };
 };
+
+export const updateUserService = async (userId, updateData) => {
+  return await User.findByIdAndUpdate(userId, updateData, { new: true }).select(
+    '-password',
+  );
+};
