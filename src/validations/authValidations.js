@@ -14,12 +14,18 @@ export const registerUserSchema = {
       'string.max': 'Email must be a 64 or less characters long',
       'any.required': 'Email required',
     }),
-    password: Joi.string().required().min(8).max(128).messages({
-      'string.base': 'Password must be a string',
-      'string.min': 'Password must be a 8 or more characters long',
-      'string.max': 'Password must be a 128 or less characters long',
-      'any.required': 'Password required',
-    }),
+    password: Joi.string()
+      .required()
+      .min(8)
+      .max(128)
+      .pattern(/^\S+$/)
+      .messages({
+        'string.base': 'Password must be a string',
+        'string.min': 'Password must be a 8 or more characters long',
+        'string.max': 'Password must be a 128 or less characters long',
+        'string.pattern.base': 'Password must not contain spaces',
+        'any.required': 'Password required',
+      }),
   }),
 };
 
