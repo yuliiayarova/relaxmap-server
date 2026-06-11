@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import { Location } from '../../models/location.js';
+import { saveFileToCloudinary } from '../../utils/saveFileToCloudinary.js';
 
 export const getAllLocations = async (req, res) => {
   const {
@@ -56,17 +57,40 @@ export const createLocation = async (req, res) => {
     ...req.body,
     ownerId: req.user._id,
   });
+
+  if (req.file) {
+    const uploadedImage = await saveFileToCloudinary(
+      req.file.buffer,
+      location._id,
+    );
+
+    const image = uploadedImage.secure_url;
+
+    location.image = image;
+    await location.save();
+  }
   res.status(201).json(location);
 };
 
 export const updateLocation = async (req, res) => {
   const { locationId } = req.params;
+
+  let updateData = { ...req.body };
+
+  if (req.file) {
+    const uploadedImage = await saveFileToCloudinary(
+      req.file.buffer,
+      locationId,
+    );
+
+    updateData.image = uploadedImage.secure_url;
+  }
   const location = await Location.findOneAndUpdate(
     {
       _id: locationId,
       ownerId: req.user._id,
     },
-    req.body,
+    updateData,
     {
       returnDocument: 'after',
       runValidators: true,

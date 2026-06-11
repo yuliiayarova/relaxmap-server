@@ -13,9 +13,9 @@ import {
   updateLocation,
 } from '../controllers/locations/locationsController.js';
 import { authMiddleWare } from '../middleware/authMiddleware.js';
+import { upload } from '../middleware/multer.js';
 
 const locationsRouter = Router();
-
 
 locationsRouter.get(
   '/api/locations',
@@ -31,12 +31,14 @@ locationsRouter.get(
 locationsRouter.post(
   '/api/locations',
   authMiddleWare,
+  upload.single('image'),
   celebrate(createLocationSchema),
   createLocation,
 );
 locationsRouter.patch(
   '/api/locations/:locationId',
   authMiddleWare,
+  upload.single('image'),
   celebrate(updateLocationSchema),
   updateLocation,
 );
