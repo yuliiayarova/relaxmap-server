@@ -27,7 +27,6 @@ export const getLocationByIdSchema = {
 
 export const createLocationSchema = {
   [Segments.BODY]: Joi.object({
-    image: Joi.string(),
     name: Joi.string().trim().required(),
     locationType: Joi.string().required(),
     region: Joi.string().required(),
@@ -44,7 +43,6 @@ export const updateLocationSchema = {
     locationId: Joi.string().custom(objectIdValidator).required(),
   }),
   [Segments.BODY]: Joi.object({
-    image: Joi.string(),
     name: Joi.string().trim(),
     locationType: Joi.string(),
     region: Joi.string(),
