@@ -5,7 +5,7 @@ const objectIdValidator = (value, helpers) => {
   return isValidObjectId(value) ? value : helpers.message('Invalid id format');
 };
 
-// const locationsSortFields = ['rate'];
+const locationsSortFields = ['_id', 'rate', 'popular', 'newest'];
 
 export const getAllLocationsSchema = {
   [Segments.QUERY]: Joi.object({
@@ -15,7 +15,9 @@ export const getAllLocationsSchema = {
     locationType: Joi.string().allow(''),
     search: Joi.string().allow(''),
     sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
-    sortBy: Joi.string().valid('_id', 'rate').default('_id'),
+    sortBy: Joi.string()
+      .valid(...locationsSortFields)
+      .default('_id'),
   }),
 };
 

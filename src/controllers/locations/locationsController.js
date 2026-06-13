@@ -2,6 +2,9 @@ import createHttpError from 'http-errors';
 import { Location } from '../../models/location.js';
 import { saveFileToCloudinary } from '../../utils/saveFileToCloudinary.js';
 
+// const locationsSortFields = ['_id', 'rate', 'popular', 'newest'];
+// -------------------------стандартно|за рейт|за популяр|спочатку новіші
+
 export const getAllLocations = async (req, res) => {
   const {
     page = 1,
@@ -26,13 +29,36 @@ export const getAllLocations = async (req, res) => {
       ],
     });
   }
+
+  let tmp_sortBy = sortBy;
+  let tmp_sortOrder = sortOrder;
+
+  switch (sortBy) {
+    case 'rate':
+      tmp_sortOrder = 'desc';
+      break;
+    case 'popular':
+      tmp_sortBy = 'location.feedbacksId.length';
+      tmp_sortOrder = 'desc';
+      break;
+    case 'newest':
+      // tmp_sortBy = 'updatedAt';
+      tmp_sortOrder = 'desc';
+      break;
+
+    default:
+      tmp_sortBy = sortBy;
+      tmp_sortOrder = sortOrder;
+      console.log('не нашли по чем сортировать, применяем _id');
+      break;
+  } /**/
   const [totalLocations, locations] = await Promise.all([
     locationsQuery.clone().countDocuments(),
     locationsQuery
       .clone()
       .skip(skip)
       .limit(perPage)
-      .sort({ [sortBy]: sortOrder }),
+      .sort({ [tmp_sortBy]: tmp_sortOrder }),
   ]);
   const totalPages = Math.ceil(totalLocations / perPage);
   res
