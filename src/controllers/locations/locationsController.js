@@ -48,7 +48,6 @@ export const getAllLocations = async (req, res) => {
         feedbacksCount: { $size: { $ifNull: ['$feedbacksId', []] } },
       },
     },
-    /* начало вставки */
     {
       $lookup: {
         from: 'locationtypes',
@@ -59,12 +58,11 @@ export const getAllLocations = async (req, res) => {
     },
     {
       $unwind: { path: '$locationTypeData', preserveNullAndEmptyArrays: true },
-    } /*конец вставки */,
+    },
     { $sort: sortStage },
     { $skip: skip },
     { $limit: parseInt(perPage) },
   ];
-  /* начало вставки */
   if (search) {
     pipeline.push({
       $match: {
@@ -76,8 +74,6 @@ export const getAllLocations = async (req, res) => {
       },
     });
   }
-  /* конец вставки */
-
   const [locations, totalLocations] = await Promise.all([
     Location.aggregate(pipeline),
     Location.countDocuments(match),
@@ -88,68 +84,6 @@ export const getAllLocations = async (req, res) => {
   res
     .status(200)
     .json({ page, perPage, totalLocations, totalPages, locations });
-
-  /*
-  const {
-    page = 1,
-    perPage = 10,
-    region,
-    locationType,
-    search,
-    sortBy = '_id',
-    sortOrder = 'asc',
-  } = req.query;
-  //   const { _id: userId } = req.user;
-  const skip = (page - 1) * perPage;
-  const locationsQuery = Location.find();
-  //   if (userId) locationsQuery.where('userId').equals(userId);
-  if (region) locationsQuery.where('region').equals(region);
-  if (locationType) locationsQuery.where('locationType').equals(locationType);
-  if (search) {
-    locationsQuery.where({
-      $or: [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ],
-    });
-  }
-
-  let tmp_sortBy = sortBy;
-  let tmp_sortOrder = sortOrder;
-
-  switch (sortBy) {
-    case 'rate':
-      tmp_sortOrder = 'desc';
-      break;
-    case 'popular':
-      tmp_sortBy = 'location.feedbacksId.length';
-      tmp_sortOrder = 'desc';
-      break;
-    case 'newest':
-      // tmp_sortBy = 'updatedAt';
-      tmp_sortOrder = 'desc';
-      break;
-
-    default:
-      tmp_sortBy = sortBy;
-      tmp_sortOrder = sortOrder;
-      console.log('не нашли по чем сортировать, применяем _id');
-      break;
-  }
-
-  const [totalLocations, locations] = await Promise.all([
-    locationsQuery.clone().countDocuments(),
-    locationsQuery
-      .clone()
-      .skip(skip)
-      .limit(perPage)
-      .sort({ [tmp_sortBy]: tmp_sortOrder }),
-  ]);
-  const totalPages = Math.ceil(totalLocations / perPage);
-  res
-    .status(200)
-    .json({ page, perPage, totalLocations, totalPages, locations });
-/**/
 };
 
 export const getLocationById = async (req, res) => {
