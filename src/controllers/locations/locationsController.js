@@ -12,29 +12,75 @@ export const getAllLocations = async (req, res) => {
     sortBy = '_id',
     sortOrder = 'asc',
   } = req.query;
-  //   const { _id: userId } = req.user;
+
   const skip = (page - 1) * perPage;
-  const locationsQuery = Location.find();
-  //   if (userId) locationsQuery.where('userId').equals(userId);
-  if (region) locationsQuery.where('region').equals(region);
-  if (locationType) locationsQuery.where('locationType').equals(locationType);
+
+  const match = {};
+  if (region) match.region = region;
+  if (locationType) match.locationType = locationType;
   if (search) {
-    locationsQuery.where({
-      $or: [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ],
+    match.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } },
+    ];
+  }
+
+  let sortStage = {};
+  switch (sortBy) {
+    case 'rate':
+      sortStage = { rate: -1 };
+      break;
+    case 'popular':
+      sortStage = { feedbacksCount: -1 };
+      break;
+    case 'newest':
+      sortStage = { createdAt: -1 };
+      break;
+    default:
+      sortStage = { _id: 1 };
+      break;
+  }
+
+  const pipeline = [
+    { $match: match },
+    {
+      $addFields: {
+        feedbacksCount: { $size: { $ifNull: ['$feedbacksId', []] } },
+      },
+    },
+    {
+      $lookup: {
+        from: 'locationtypes',
+        localField: 'locationType',
+        foreignField: 'slug',
+        as: 'locationTypeData',
+      },
+    },
+    {
+      $unwind: { path: '$locationTypeData', preserveNullAndEmptyArrays: true },
+    },
+    { $sort: sortStage },
+    { $skip: skip },
+    { $limit: parseInt(perPage) },
+  ];
+  if (search) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+          { 'locationTypeData.type': { $regex: search, $options: 'i' } },
+        ],
+      },
     });
   }
-  const [totalLocations, locations] = await Promise.all([
-    locationsQuery.clone().countDocuments(),
-    locationsQuery
-      .clone()
-      .skip(skip)
-      .limit(perPage)
-      .sort({ [sortBy]: sortOrder }),
+  const [locations, totalLocations] = await Promise.all([
+    Location.aggregate(pipeline),
+    Location.countDocuments(match),
   ]);
+
   const totalPages = Math.ceil(totalLocations / perPage);
+
   res
     .status(200)
     .json({ page, perPage, totalLocations, totalPages, locations });
