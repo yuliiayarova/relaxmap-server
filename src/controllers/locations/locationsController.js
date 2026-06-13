@@ -2,10 +2,94 @@ import createHttpError from 'http-errors';
 import { Location } from '../../models/location.js';
 import { saveFileToCloudinary } from '../../utils/saveFileToCloudinary.js';
 
-// const locationsSortFields = ['_id', 'rate', 'popular', 'newest'];
-// -------------------------стандартно|за рейт|за популяр|спочатку новіші
-
 export const getAllLocations = async (req, res) => {
+  const {
+    page = 1,
+    perPage = 10,
+    region,
+    locationType,
+    search,
+    sortBy = '_id',
+    sortOrder = 'asc',
+  } = req.query;
+
+  const skip = (page - 1) * perPage;
+
+  const match = {};
+  if (region) match.region = region;
+  if (locationType) match.locationType = locationType;
+  if (search) {
+    match.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } },
+    ];
+  }
+
+  let sortStage = {};
+  switch (sortBy) {
+    case 'rate':
+      sortStage = { rate: -1 };
+      break;
+    case 'popular':
+      sortStage = { feedbacksCount: -1 };
+      break;
+    case 'newest':
+      sortStage = { createdAt: -1 };
+      break;
+    default:
+      sortStage = { _id: 1 };
+      break;
+  }
+
+  const pipeline = [
+    { $match: match },
+    {
+      $addFields: {
+        feedbacksCount: { $size: { $ifNull: ['$feedbacksId', []] } },
+      },
+    },
+    /* начало вставки */
+    {
+      $lookup: {
+        from: 'locationtypes',
+        localField: 'locationType',
+        foreignField: 'slug',
+        as: 'locationTypeData',
+      },
+    },
+    {
+      $unwind: { path: '$locationTypeData', preserveNullAndEmptyArrays: true },
+    } /*конец вставки */,
+    { $sort: sortStage },
+    { $skip: skip },
+    { $limit: parseInt(perPage) },
+  ];
+  /* начало вставки */
+  if (search) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+          { 'locationTypeData.type': { $regex: search, $options: 'i' } },
+        ],
+      },
+    });
+  }
+  /* конец вставки */
+
+  const [locations, totalLocations] = await Promise.all([
+    Location.aggregate(pipeline),
+    Location.countDocuments(match),
+  ]);
+
+  const totalPages = Math.ceil(totalLocations / perPage);
+
+  res
+    .status(200)
+    .json({ page, perPage, totalLocations, totalPages, locations });
+
+  /*
   const {
     page = 1,
     perPage = 10,
@@ -51,7 +135,8 @@ export const getAllLocations = async (req, res) => {
       tmp_sortOrder = sortOrder;
       console.log('не нашли по чем сортировать, применяем _id');
       break;
-  } /**/
+  }
+
   const [totalLocations, locations] = await Promise.all([
     locationsQuery.clone().countDocuments(),
     locationsQuery
@@ -64,6 +149,7 @@ export const getAllLocations = async (req, res) => {
   res
     .status(200)
     .json({ page, perPage, totalLocations, totalPages, locations });
+/**/
 };
 
 export const getLocationById = async (req, res) => {
