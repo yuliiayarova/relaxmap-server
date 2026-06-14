@@ -96,6 +96,16 @@ export const createFeedbackByLocationId = async (req, res, next) => {
       userName: req.user.name,
     });
     location.feedbacksId.push(feedback._id);
+
+    const feedbacks = await Feedback.find({
+      _id: { $in: location.feedbacksId },
+    });
+
+    const averageRate =
+      feedbacks.reduce((sum, item) => sum + item.rate, 0) / feedbacks.length;
+
+    location.rate = Number(averageRate.toFixed(1));
+
     await location.save();
     res.status(201).json({
       status: 201,
