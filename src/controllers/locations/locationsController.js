@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import { Location } from '../../models/location.js';
 import { saveFileToCloudinary } from '../../utils/saveFileToCloudinary.js';
+import { User } from '../../models/user.js';
 
 export const getAllLocations = async (req, res) => {
   const {
@@ -102,6 +103,10 @@ export const createLocation = async (req, res) => {
   const location = await Location.create({
     ...req.body,
     ownerId: req.user._id,
+  });
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $inc: { articlesAmount: 1 },
   });
 
   if (req.file) {
