@@ -19,6 +19,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://localhost:3000',
   'http://localhost:3001',
+  'https://editor.swagger.io',
   process.env.FRONTEND_DOMAIN,
 ];
 
