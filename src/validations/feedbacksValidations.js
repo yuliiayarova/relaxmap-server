@@ -24,6 +24,6 @@ export const createFeedbackByLocationIdSchema = {
   }),
   [Segments.BODY]: Joi.object({
     rate: Joi.number().min(1).max(5).required(),
-    description: Joi.string().min(3).max(1000).required(),
+    description: Joi.string().min(3).max(200).required(),
   }),
 };
