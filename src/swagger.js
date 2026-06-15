@@ -1,4 +1,9 @@
-﻿import swaggerJSDoc from 'swagger-jsdoc';
+﻿import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import swaggerJSDoc from 'swagger-jsdoc';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -21,7 +26,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/routes/*.js'],
+  apis: [path.join(__dirname, 'swaggerDocs.js')],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
