@@ -1,4 +1,4 @@
-import 'dotenv/config';
+﻿import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { errors } from 'celebrate';
@@ -15,9 +15,29 @@ import locationsRouter from './routes/locationsRoutes.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.js';
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://localhost:3000',
+  'http://localhost:3001',
+  process.env.FRONTEND_DOMAIN,
+];
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
+
 app.use(cookieParser());
 app.use(logger);
 const PORT = process.env.PORT ?? 3000;
@@ -42,3 +62,4 @@ await connectMongoDB();
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+

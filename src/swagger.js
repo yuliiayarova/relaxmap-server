@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'https://relaxmap-server.onrender.com',
+      url: 'https://relaxmap-server-a8mo.onrender.com/',
       description: 'Production server',
     },
     {
@@ -21,7 +21,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/routes/*.js', './src/swaggerDocs.js'],
+  apis: ['./src/routes/*.js'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
