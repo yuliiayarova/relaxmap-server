@@ -1,5 +1,19 @@
-import { registerUser } from './auth/registerUser.js';
+import {
+  loginUserController,
+  logoutUserController,
+  refreshUserController,
+  registerUserController,
+} from './auth/authControllers.js';
+import { getLocationTypes, getRegions } from './categories/getCategories.js';
 
 export const auth = {
-  registerUser,
+  registerUserController,
+  loginUserController,
+  logoutUserController,
+  refreshUserController,
+};
+
+export const categories = {
+  getRegions,
+  getLocationTypes,
 };
