@@ -33,7 +33,7 @@ const locationSchema = new Schema(
     },
     coordinates: {
       lat: { type: Number, required: true },
-      lon: { type: Number, required: true },
+      lng: { type: Number, required: true },
     },
     ownerId: {
       type: Schema.Types.ObjectId,

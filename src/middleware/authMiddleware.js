@@ -4,17 +4,19 @@ import { User } from '../models/user.js';
 
 export const authMiddleWare = async (req, res, next) => {
   const { accessToken } = req.cookies;
-  if (!accessToken) throw createHttpError(401, 'Missing access token');
+  if (!accessToken) throw createHttpError(401, 'Токен доступу відсутній');
 
   const session = await Session.findOne({ accessToken });
-  if (!session) throw createHttpError(401, 'Session not found');
+  if (!session) throw createHttpError(401, 'Сесію не знайдено');
 
   const isAccessTokenExpired =
     new Date() > new Date(session.accessTokenValidUntil);
-  if (isAccessTokenExpired) throw createHttpError(401, 'Access token expired');
+  if (isAccessTokenExpired)
+    throw createHttpError(401, 'Термін дії токена доступу закінчився');
 
   const user = await User.findById(session.userId);
-  if (!user) throw createHttpError(401, 'User does not exist in this session');
+  if (!user)
+    throw createHttpError(401, 'Користувача для цієї сесії не знайдено');
 
   req.user = user;
   next();

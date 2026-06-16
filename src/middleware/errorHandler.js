@@ -6,7 +6,7 @@ export const errorHandler = (err, req, res, next) => {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(413).json({
         error: 'FILE_TOO_LARGE',
-        message: 'Image size must not exceed 2 MB',
+        message: 'Розмір зображення не повинен перевищувати 2 МБ',
       });
     }
 
@@ -25,7 +25,7 @@ export const errorHandler = (err, req, res, next) => {
 
   res.status(500).json({
     message: isProd
-      ? 'Something went wrong. Please try again later.'
+      ? 'Щось пішло не так. Спробуйте ще раз пізніше.'
       : err.message,
   });
 };
