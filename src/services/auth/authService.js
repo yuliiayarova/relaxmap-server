@@ -20,7 +20,7 @@ export const createSession = async (userId) => {
 
 export const registerUserService = async (payload) => {
   const user = await User.findOne({ email: payload.email });
-  if (user) throw createHttpError(409, 'Email in use');
+  if (user) throw createHttpError(409, 'Користувач з таким email вже існує');
 
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
@@ -32,10 +32,10 @@ export const registerUserService = async (payload) => {
 
 export const loginUserService = async (payload) => {
   const user = await User.findOne({ email: payload.email });
-  if (!user) throw createHttpError(401, 'Invalid email or password');
+  if (!user) throw createHttpError(401, 'Невірний email або пароль');
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
-  if (!isEqual) throw createHttpError(401, 'Invalid email or password');
+  if (!isEqual) throw createHttpError(401, 'Невірний email або пароль');
 
   return user;
 };
@@ -46,13 +46,13 @@ export const logoutUserService = async (sessionId) => {
 
 export const refreshUserService = async ({ sessionId, refreshToken }) => {
   const session = await Session.findOne({ _id: sessionId, refreshToken });
-  if (!session) throw createHttpError(401, 'Session not found');
+  if (!session) throw createHttpError(401, 'Сесію не знайдено');
 
   const isSessionTokenExpired =
     new Date() > new Date(session.refreshTokenValidUntil);
 
   if (isSessionTokenExpired)
-    throw createHttpError(401, 'Session token expired');
+    throw createHttpError(401, 'Термін дії сесії закінчився');
 
   await Session.deleteOne({ _id: sessionId, refreshToken });
   const newSession = await createSession(session.userId);

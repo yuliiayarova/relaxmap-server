@@ -90,6 +90,10 @@ export const createFeedbackByLocationId = async (req, res, next) => {
         message: 'Location not found',
       });
     }
+
+    console.log('USER', req.user);
+    console.log('LOCATION', locationId);
+    console.log('BODY', req.body);
     const feedback = await Feedback.create({
       rate,
       description,
@@ -105,7 +109,8 @@ export const createFeedbackByLocationId = async (req, res, next) => {
       feedbacks.reduce((sum, item) => sum + item.rate, 0) / feedbacks.length;
 
     location.rate = Number(averageRate.toFixed(1));
-
+    console.log(location.coordinates);
+    console.log(location._id);
     await location.save();
     res.status(201).json({
       status: 201,
@@ -113,6 +118,12 @@ export const createFeedbackByLocationId = async (req, res, next) => {
       data: feedback,
     });
   } catch (error) {
+    console.error('CREATE FEEDBACK ERROR');
+
+    if (error.name) console.error('NAME:', error.name);
+    if (error.message) console.error('MESSAGE:', error.message);
+
+    console.error(error);
     next(error);
   }
 };
