@@ -20,8 +20,9 @@ const allowedOrigins = [
   'https://localhost:3000',
   'http://localhost:3001',
   'https://editor.swagger.io',
+  'https://relaxmap-server-a8mo.onrender.com',
   process.env.FRONTEND_DOMAIN,
-];
+].filter(Boolean);
 
 const app = express();
 app.use(
