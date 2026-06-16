@@ -20,7 +20,7 @@ const allowedOrigins = [
   'https://localhost:3000',
   'http://localhost:3001',
   'https://editor.swagger.io',
-  'https://relaxmap-server-a8mo.onrender.com',
+  // 'https://relaxmap-server-a8mo.onrender.com',
   process.env.FRONTEND_DOMAIN,
 ].filter(Boolean);
 
@@ -64,4 +64,3 @@ await connectMongoDB();
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
