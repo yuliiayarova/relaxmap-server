@@ -53,10 +53,10 @@
  *         password: { type: string, minLength: 8, example: Password123 }
  *     Coordinates:
  *       type: object
- *       required: [lat, lon]
+ *       required: [lat, lng]
  *       properties:
  *         lat: { type: number, example: 50.4501 }
- *         lon: { type: number, example: 30.5234 }
+ *         lng: { type: number, example: 30.5234 }
  *     Location:
  *       type: object
  *       properties:
